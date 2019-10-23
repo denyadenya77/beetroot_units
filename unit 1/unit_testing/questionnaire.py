@@ -55,29 +55,33 @@ i = 0
 results = [None, None, None]
 total_v = 0
 
-for index, key in enumerate(test):
-    if index == i and i != 3:
-        print('')
-        print(key)
-        for k, v in test[key].items():
-            print(k)
-        answer = input('Выберите один вариант ответа: ') + '.'
+# for index, key in enumerate(test):
+for key in test.keys():
+    # if index == i and i != 3:
+    if key == 'total':
+        break
 
-        right_answer = the_right_answer(test, i)
-        right_answer_key = right_answer[0]
-        right_answer_value = right_answer[1]
+    print('')
+    print(key)
+    for k, v in test[key].items():
+        print(k)
+    answer = input('Выберите один вариант ответа: ') + '.'
 
-        full_user_answer = the_user_answer(answer, test, i)
-        full_user_answer_key = full_user_answer[0]
-        full_user_answer_value = full_user_answer[1]
+    right_answer = the_right_answer(test, i)
+    right_answer_key = right_answer[0]
+    right_answer_value = right_answer[1]
 
-        if full_user_answer_key == right_answer_key:
-            user_test[key] = {right_answer_key: right_answer_value}
-            total_v = total_v + 3
-            results[i] = True
-        if full_user_answer_key != right_answer_key:
-            user_test[key] = {full_user_answer_key: full_user_answer_value, right_answer_key: right_answer_value}
-            results[i] = False
+    full_user_answer = the_user_answer(answer, test, i)
+    full_user_answer_key = full_user_answer[0]
+    full_user_answer_value = full_user_answer[1]
+
+    if full_user_answer_key == right_answer_key:
+        user_test[key] = {right_answer_key: right_answer_value}
+        total_v = total_v + 3
+        results[i] = True
+    if full_user_answer_key != right_answer_key:
+        user_test[key] = {full_user_answer_key: full_user_answer_value, right_answer_key: right_answer_value}
+        results[i] = False
 
     i += 1
 
@@ -115,17 +119,17 @@ with open('stat_test.json', 'r') as file_obj:
 
 
 with open('stat_test.json', 'w') as file_obj:
-    if results[0] == True:
+    if results[0]:
         stat['q1'][0] += 1
-    elif results[0] == False:
+    elif not results[0]:
         stat['q1'][1] += 1
-    if results[1] == True:
+    if results[1]:
         stat['q2'][0] += 1
-    elif results[1] == False:
+    elif not results[1]:
         stat['q2'][1] += 1
-    if results[2] == True:
+    if results[2]:
         stat['q3'][0] += 1
-    elif results[2] == False:
+    elif not results[2]:
         stat['q3'][1] += 1
     json.dump(stat, file_obj)
 
