@@ -65,6 +65,7 @@ while mistakes < 8:
     if user in quiz_word:
         print('Эта буква есть в слове!')
 
+
         for sub_list in vysilitsa_list:
             print(' '.join([str(x) for x in sub_list]))
 
@@ -73,6 +74,7 @@ while mistakes < 8:
 
         i = quiz_word.index(user)
         word_in_process[i] = user
+        quiz_word[i] = None
 
 
         print('Вы предлагали след. буквы: ')
