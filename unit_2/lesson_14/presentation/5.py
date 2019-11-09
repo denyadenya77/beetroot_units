@@ -8,11 +8,14 @@ import json
 def check(f):
     def wrapper():
         a = f()
+        l = []
         for v in a.values():
             if isinstance(v, str):
-                print(a)
-            else:
-                return '-----'
+                l.append(v)
+        if len(l) == len(a):
+          print(a)
+        else:
+          print('--------------------')
     return wrapper
 
 
