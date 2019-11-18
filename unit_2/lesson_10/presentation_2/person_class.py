@@ -187,9 +187,9 @@ class Timetable:
 
 
 denys = Person('Denys', 'Kuznetsov', '1997-03-13')
-print(denys.age)
-print(denys.full_name)
-print(denys.is_teen())
+# print(denys.age)
+# print(denys.full_name)
+# print(denys.is_teen())
 
 
 alex = Student('Alex', 'Vasilenko', '1990-05-18')
@@ -200,13 +200,13 @@ petya = Student('Petya', 'Pet`kyn', '1899-09-30')
 school_1 = School
 classroom_402 = ClassRoom('402', alex, misha)
 classroom_101 = ClassRoom('101', petya)
-print(classroom_402.displayInfo()) # словарь предметов и учителей
+# print(classroom_402.displayInfo()) # словарь предметов и учителей
 
 
 daria = Teacher('Daria', 'Tereta', '2000-10-10', 'python')
 victor = Teacher('Vit`ok', 'Victorovsky', '4554-12-01', 'python')
 oleg = Teacher('Oleg', 'Olegov', '1985-15-15', 'java')
-print(school_1.subj_teachers_print())
+# print(school_1.subj_teachers_print())
 
 
 lesson_1 = Lesson('python', daria)
@@ -215,9 +215,9 @@ lesson_2 = Lesson('java', oleg)
 
 monday = Timetable('monday', lesson_1, lesson_2)
 monday.set_absent(lesson_1, denys, alex)
-print(monday.get_absent(lesson_1))
-print(monday.count_lessons())
+# print(monday.get_absent(lesson_1))
+# print(monday.count_lessons())
 
 
-if classroom_402 > classroom_101:
-    print("classroom_402 > classroom_101")
+# if classroom_402 > classroom_101:
+    # print("classroom_402 > classroom_101")
