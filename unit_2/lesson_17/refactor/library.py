@@ -27,7 +27,7 @@ class Library:
         вернуть False если пользователь не зарегестрирован
         """
         for person_card in self.person_cards:
-            if person == person_card.name:
+            if person == person_card.person:
                 return True
         return False
 
@@ -39,7 +39,7 @@ class Library:
     def get_person_card(self, person):
         """вернуть карточку пользователя"""
         for card in self.person_cards:
-            if person == card.name:
+            if person == card.person:
                 return card
         else:
             raise Exception('Not exist')
@@ -86,11 +86,11 @@ class Library:
 
         for person_card in self.person_cards:
             for book in person_card.taken_books:
-                taken_books.append(book.name)
+                taken_books.append(book['book_name'])
 
         for book in self.all_books:
             if book not in taken_books:
-                available_books.append(book)
+                available_books.append(book['book_name'])
         return available_books
 
 
@@ -111,8 +111,8 @@ class Book:
 
 class PersonCard:
 
-    def __init__(self, name, id):
-        self.name = name
+    def __init__(self, person, id):
+        self.person = person
         self.id = id
         self.date_of_registr = datetime.now()
         self.taken_books = []
@@ -124,7 +124,7 @@ class PersonCard:
         """вывести на экран информацию о пользователе и книгах которые у него на руках"""
         books = [book.name for book in self.taken_books]
         str_books = ', '.join(books)
-        return f'User name: {self.name}.\n' \
+        return f'User name: {self.person}.\n' \
                f'User ID: {self.id}.\n' \
                f'Date of registration: {self.date_of_registr}\n' \
                f'Taken books: {str_books}'
