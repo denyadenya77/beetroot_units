@@ -64,8 +64,8 @@ class Library:
                     "expiration_date": datetime.now() + timedelta(days=30)
                 }
                 person_card.take_book(order)
-            else:
-                person('Book is not available')
+        if book not in self.all_books:
+            raise Exception('Book is not available')
 
     def get_book_back(self, person, the_book):
         """вернуть книгу обратно в библиотеку"""
@@ -90,7 +90,7 @@ class Library:
 
         for book in self.all_books:
             if book not in taken_books:
-                available_books.append(book['book_name'])
+                available_books.append(book.name)
         return available_books
 
 
@@ -114,7 +114,7 @@ class PersonCard:
     def __init__(self, person, id):
         self.person = person
         self.id = id
-        self.date_of_registr = datetime.now()
+        self.date_of_register = datetime.now()
         self.taken_books = []
 
     def take_book(self, order):
@@ -126,8 +126,8 @@ class PersonCard:
         str_books = ', '.join(books)
         return f'User name: {self.person}.\n' \
                f'User ID: {self.id}.\n' \
-               f'Date of registration: {self.date_of_registr}\n' \
-               f'Taken books: {str_books}'
+               f'Date of registration: {self.date_of_register}.\n' \
+               f'Taken books: {str_books}.'
 
 
 # den = Person('denis', 'kuzn')

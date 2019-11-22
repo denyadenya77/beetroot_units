@@ -1,20 +1,6 @@
 import unittest
 from unittest.mock import patch, Mock
-from datetime import datetime, timedelta
-from uuid import uuid4
 from unit_2.lesson_17.refactor.library import *
-
-
-class TestPerson(unittest.TestCase):
-
-    def test_init(self):
-        denys = Person("Denys", "Kuznetsov")
-        self.assertEqual(denys.name, 'Denys')
-        self.assertEqual(denys.last_name, "Kuznetsov")
-
-    def test_str(self):
-        denys = Person("Denys", "Kuznetsov")
-        self.assertEqual(str(denys), "Denys Kuznetsov")
 
 
 class TestLibrary(unittest.TestCase):
@@ -26,19 +12,6 @@ class TestLibrary(unittest.TestCase):
         self.author_2 = Person('Jean-Paul', 'Sartre')
         self.book = Book("The Fall", self.author, '/path')
         self.book_2 = Book('The Wall', self.author_2, '/path_2')
-
-    # def tearDown(self):
-    #     self.library.dispose()
-    #     self.person.dispose()
-    #     self.author.dispose()
-    #     del self.book
-
-    @patch('unit_2.lesson_17.refactor.library.Library.is_person_registered')
-    def test_get_book(self, mock_ipr):
-        mock_ipr.return_value = False
-        self.library.get_book(self.person, self.book)
-        mock_ipr.assert_called()
-        self.library.person_cards.clear()  # очищаем self.person_cards для отработки других тестов
 
     def test_add_books(self):
         self.assertEqual(self.library.all_books, [])
@@ -71,8 +44,37 @@ class TestLibrary(unittest.TestCase):
         with self.assertRaises(Exception):
             self.library.get_person_card(self.person)
 
+    @patch('unit_2.lesson_17.refactor.library.Library.get_person_card')
+    @patch('unit_2.lesson_17.refactor.library.Library.register_person')
+    @patch('unit_2.lesson_17.refactor.library.Library.is_person_registered')
+    def test_get_book(self, mock_ipr, mock_register_person ,mock_get_per_card):
+        mock_ipr.return_value = False
+        self.library.all_books.append(self.book)
+        self.library.get_book(self.person, self.book)
+        mock_ipr.assert_called()
 
+        m_r_p = Mock(name=self.person.name, last_name=self.person.last_name)
+        mock_register_person.return_value = m_r_p
+        mock_register_person.assert_called()
 
+        mock_per_card = Mock(taken_books=[])
+        mock_get_per_card.return_value = mock_per_card
+        mock_get_per_card.assert_called()
+
+    @patch('unit_2.lesson_17.refactor.library.PersonCard.take_book')
+    def test_get_book_result(self, mock_take_book):
+        self.library.all_books.append(self.book)
+        self.library.get_book(self.person, self.book)
+
+        m_t_b = True
+        mock_take_book.return_value = m_t_b
+        mock_take_book.assert_called()
+        self.library.all_books.clear()
+
+    def test_get_book_raise(self):
+        self.library.all_books.clear()
+        with self.assertRaises(Exception):
+            self.library.get_book(self.person, self.book_2)
 
     @patch('unit_2.lesson_17.refactor.library.Library.get_person_card')
     def test_get_book_back(self, mock_person_card):
@@ -80,45 +82,27 @@ class TestLibrary(unittest.TestCase):
         mock_person_card.return_value = m
         self.library.get_book_back(self.person, self.book)
         self.assertEqual(m.taken_books, [])
-
-
-
-
-
-        self.library.add_books(self.book)
-        self.library.get_book(self.person, self.book)
-        person_card = self.library.get_person_card(self.person)
-        for one_dict in person_card.taken_books:
-            for v in one_dict.values():
-                if v == self.book:
-                    self.assertEqual(v, self.book)
         self.library.person_cards.clear()  # очищаем self.person_cards для отработки других тестов
-
-
-
-
-
 
     def test_book_count(self):
         self.library.all_books.clear()
-        self.library.add_books(self.book)
-        self.assertEqual(self.library.book_count, 1)
-
-    # def test_all_available_books(self):
-    #     # не стоило делать этот ордер словарем
+        self.library.all_books.append(self.book)
+        book_count_return = self.library.book_count
+        self.assertEqual(book_count_return, 1)
+        self.library.all_books.clear()
     #
-    #     self.library.all_books.clear()
-    #     self.assertEqual(self.library.all_books, [])
-    #     self.library.add_books(self.book, self.book_2)
-    #     self.library.get_book(self.person, self.book)
-    #     self.assertEqual(self.library.all_available_books(), ["The Wall"])
+    def test_all_available_books(self):
+        self.library.all_books.clear()
 
+        self.library.all_books.append(self.book)
+        mock_person_card = Mock(taken_books=[{'book_name': 'book_name',
+                                              'when_was_taken': '22.11.19',
+                                              'expiration_date': '31.12.19'}])
+        self.library.person_cards.append(mock_person_card)
+        all_available_books_return = self.library.all_available_books()
+        self.assertEqual([self.book.name], all_available_books_return)
 
-
-
-
-
-
+        self.library.all_books.clear()
 
 
 if __name__ == "__main__":
