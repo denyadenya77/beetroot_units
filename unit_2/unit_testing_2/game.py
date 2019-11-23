@@ -59,9 +59,9 @@ class Game:
                 move(victim)
                 self.show_status(move, striker, victim)
 
-            if self.computer.health < 0:
+            if self.computer.health <= 0:
                 print(f"{self.player.name} wins!")
-            elif self.player.health < 0:
+            elif self.player.health <= 0:
                 print(f'{self.computer.name} wins!')
 
     def show_status(self, move, striker, *victim):
@@ -72,10 +72,10 @@ class Game:
             print(f'{striker.name} treatment.\n')
 
 
-player = Player('Player')
-computer = Player('Computer')
-game = Game(player, computer)
-game.game()
+# player = Player('Player')
+# computer = Player('Computer')
+# game = Game(player, computer)
+# game.game()
 
 
 
