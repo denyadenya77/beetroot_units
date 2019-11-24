@@ -49,14 +49,17 @@ class Game:
 
             if self.computer.health >= 35 and len(self.computer.moves) == 3:
                 move(victim)
+                self.health_borders(striker, victim)
                 self.show_status(move, striker, victim)
             elif self.computer.health >= 35 and len(self.computer.moves) == 4:
                 self.computer.health.remove(self.computer.health[3])
                 move(victim)
+                self.health_borders(striker, victim)
                 self.show_status(move, striker, victim)
             else:
                 self.computer.moves.append(Player.treatment)
                 move(victim)
+                self.health_borders(striker, victim)
                 self.show_status(move, striker, victim)
 
             if self.computer.health <= 0:
@@ -64,18 +67,25 @@ class Game:
             elif self.player.health <= 0:
                 print(f'{self.computer.name} wins!')
 
-    def show_status(self, move, striker, *victim):
-        the_victim = victim[0]
-        try:
-            print(f'{striker.name} {move.__name__} {the_victim.name}.\n')
-        except IndexError:
-            print(f'{striker.name} treatment.\n')
+    def show_status(self, move, striker, victim):
+        if move.__name__ == 'treatment':
+            print(f'{striker.name} treatment. Health: {striker.health}.\n')
+        else:
+            print(f'{striker.name} {move.__name__} {victim.name}.\n'
+                  f'{victim.name} health: {victim.health}\n')
+
+    def health_borders(self, *players):
+        for player in players:
+            if player.health > 100:
+                player.health = 100
+            if player.health < 0:
+                player.health = 0
 
 
-# player = Player('Player')
-# computer = Player('Computer')
-# game = Game(player, computer)
-# game.game()
+player = Player('Player')
+computer = Player('Computer')
+game = Game(player, computer)
+game.game()
 
 
 

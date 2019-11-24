@@ -8,16 +8,46 @@ class TestGame(unittest.TestCase):
     def setUp(self):
         self.player = Player('Person')
         self.computer = Player('Computer')
-        self.game = Game
+        self.game = Game(self.player, self.computer)
 
 
-    @patch('unit_2.unit_testing_2.game.big_hit.random.randint')
+    @patch.object(Game, 'show_status')
     @patch('random.choice')
     @patch('random.shuffle')
-    def test_game(self, mock_random_shuffle, mock_random_choice, mock_Player_big_hit_random_randint):
-        mock_Player_big_hit_random_randint.return_value = 20
-        mock_random_choice.side_effect = [Player.big_hit, Player.big_hit, Player.big_hit, Player.big_hit, Player.big_hit]
-        self.assertEqual(self.computer.health, 0)
+    def test_game_inside(self, mock_random_shuffle, mock_random_choice, mock_show_status):
+        mock_random_choice.side_effect = [Player.small_hit, Player.small_hit, Player.small_hit, Player.small_hit,
+                                          Player.small_hit, Player.small_hit]
+        self.game.game()
+        # mock_random_shuffle.assert_called()
+        mock_random_choice.assert_called()
+        mock_show_status.assert_called()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # @patch('random.choice')
+    # @patch('random.shuffle')
+    # def test_game(self, mock_random_shuffle, mock_random_choice):
+    #     mock_random_choice.side_effect = [Player.small_hit, Player.small_hit, Player.small_hit, Player.small_hit, Player.small_hit, Player.small_hit]
+    #
+    #     self.game.game()
+    #
+    #     death = 0
+    #     self.assertLess(self.computer.health, death)
+
+
 
 
 if __name__ == '__main__':
