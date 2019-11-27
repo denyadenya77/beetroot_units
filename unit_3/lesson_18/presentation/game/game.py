@@ -1,36 +1,4 @@
-# Необходимо разработать моделирование игры в виде консольного приложения. Участниками являются Компьютер и Игрок.
-# Последовательность ходов определяется случайным образом. У каждого из игроков должно быть одинаковое количество
-# здоровья (например 100) и выбор (тоже случайным образом) следующего из шагов:
-# 1. должен нанести умеренный урон и имеет небольшой диапазон (например, 18-25)
-# 2. должен иметь большой диапазон урона (например 10-35)
-# 3. должен исцелить в небольшом диапазоне (в таком же как и в пункте 1)
-#
-# После каждого действия должно быть напечатано сообщение, которое сообщает что происходило и сколько здоровья у
-# Игрока и Компьютера. Когда здоровье Компьютера достигает, например 35 % увеличьте его шанс на излечение.
-#
-# Игра завершается, если у одного из участников здоровье достигло 0.
-
 import random
-
-
-class Player:
-
-    def __init__(self, name):
-        self.name = name
-        self.health = 100
-        self.moves = [self.small_hit, self.big_hit, self.treatment]
-
-    def small_hit(self, enemy):
-        power = random.randint(18, 25)
-        enemy.health = enemy.health - power
-
-    def big_hit(self, enemy):
-        power = random.randint(10, 35)
-        enemy.health = enemy.health - power
-
-    def treatment(self, *enemy):
-        treatment = random.randint(18, 25)
-        self.health = self.health + treatment
 
 
 class Game:
@@ -84,14 +52,4 @@ class Game:
                 player.health = 100
             if player.health < 0:
                 player.health = 0
-
-
-player = Player('Player')
-computer = Player('Computer')
-game = Game(player, computer)
-game.game()
-
-
-
-
 
