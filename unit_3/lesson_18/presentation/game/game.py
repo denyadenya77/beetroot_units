@@ -1,5 +1,5 @@
 import random
-
+from player import Player
 
 class Game:
 
@@ -13,26 +13,18 @@ class Game:
             random.shuffle(striker_and_victim)
             striker = striker_and_victim[0]
             victim = striker_and_victim[1]
-            # move = random.choice(striker.moves)
 
             if self.computer.health >= 35 and len(self.computer.moves) == 3:
-                random.choice(striker.moves)(victim)
-                # move(striker, victim)
-                # getattr(striker, move.__name__).()
+                striker.move(victim)
                 self.health_borders(striker, victim)
-                # self.show_status(move, striker, victim)
             elif self.computer.health >= 35 and len(self.computer.moves) == 4:
                 self.computer.moves.remove(self.computer.moves[3])
-                random.choice(striker.moves)(victim)
-                # move(victim)
+                striker.move(victim)
                 self.health_borders(striker, victim)
-                # self.show_status(move, striker, victim)
             else:
-                self.computer.moves.append(Player.treatment)
-                random.choice(striker.moves)(victim)
-                # move(victim)
+                self.computer.moves.append('treatment')
+                striker.move(victim)
                 self.health_borders(striker, victim)
-                # self.show_status(move, striker, victim)
 
             if self.computer.health <= 0:
                 print(f"{self.player.name} wins!")

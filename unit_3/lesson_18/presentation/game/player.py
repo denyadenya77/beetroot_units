@@ -6,7 +6,7 @@ class Player:
     def __init__(self, name):
         self.name = name
         self.health = 100
-        self.moves = [self.small_hit, self.big_hit, self.treatment]
+        self.moves = ['small_hit', 'big_hit', 'treatment']
 
     def small_hit(self, enemy):
         power = random.randint(18, 25)
@@ -19,3 +19,7 @@ class Player:
     def treatment(self, *enemy):
         treatment = random.randint(18, 25)
         self.health = self.health + treatment
+
+    def move(self, victim):
+        move = random.choice(self.moves)
+        getattr(self, move)(victim)
