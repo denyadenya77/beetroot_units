@@ -1,12 +1,12 @@
 import os
 from datetime import datetime
 
-print(os.getcwd())  # get current working directory
+# print(os.getcwd())  # get current working directory
 
 os.chdir('/home/denis/PycharmProjects/beetroot_academy/unit_3/lesson_19')  # change current working directory
-print(os.getcwd())
-
-print(os.listdir())  # list of files/derectories in current working directory
+# print(os.getcwd())
+#
+# print(os.listdir())  # list of files/derectories in current working directory
 
 # os.mkdir('lms-2')  # создать директорию
 # os.makedirs('lms-2/myfiles') # создать вложенные директории
@@ -21,11 +21,11 @@ print(os.listdir())  # list of files/derectories in current working directory
 # print(datetime.fromtimestamp(mod_time))  # time in human format
 
 
-# for dirpath, dirnames, filenames in os.walk(os.getcwd()):
-#     print(f'Current path: {dirpath}.')
-#     print(f'Directories: {dirnames}.')
-#     print(f'Files: {filenames}.')
-#     print()
+for dirpath, dirnames, filenames in os.walk(os.getcwd()):
+    print(f'Current path: {dirpath}.')
+    print(f'Directories: {dirnames}.')
+    print(f'Files: {filenames}.')
+    print()
 
 # print(os.environ.get('HOME'))  # environment variables
 
