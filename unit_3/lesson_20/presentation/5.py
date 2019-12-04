@@ -19,9 +19,7 @@ def os_walk(path):
         print(f'{path}    :    {dirs_in_dir}')
         for directory in dirs_in_dir:
             new_path = os.path.join(path, directory)
-            print(os_walk(new_path))
-
-    return '\n'
+            os_walk(new_path)
 
 
 print(os_walk('/home/denis/PycharmProjects/beetroot_academy/unit_3'))
