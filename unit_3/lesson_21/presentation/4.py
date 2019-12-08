@@ -45,15 +45,15 @@ class LinkedList:
         sup_prev = None
         prev = None
         cur = self.head
-        while cur.next is not None:
-            if cur.next is not None:
+        while cur.next:
+            if cur.next:
                 sup_prev = prev
                 prev = cur
                 cur = cur.next
                 if cur.data < prev.data:
                     prev.next = cur.next
                     cur.next = prev
-                    if sup_prev is None:
+                    if not sup_prev:
                         self.head = cur
                     else:
                         sup_prev.next = cur
@@ -75,9 +75,8 @@ llist.push(82)
 llist.push(90)
 llist.print_llist()
 
-
 llist.sort_it()
-
 
 print()
 llist.print_llist()
+

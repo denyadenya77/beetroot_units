@@ -32,7 +32,6 @@ class Stack:
             return l.pop()
 
 
-
 a = Stack()
 a.push(1)
 a.push(2)
