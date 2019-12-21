@@ -9,41 +9,52 @@ class Game:
         SCREEN_WIDTH = 600
         SCREEN_HIGHT = 800
 
-
-
-        pygame.init()
-        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
-
-
-        round.create_second_round()
+        current_round = 1
 
         while True:
-            pygame.time.delay(30)
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    quit()
+            pygame.init()
+            screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HIGHT))
 
-            if ball.ball_y > 800:
+
+            if current_round == 1:
+                round.create_first_round()
+            elif current_round == 2:
+                round.create_second_round()
+            elif current_round == 3:
+                round.create_third_round()
+            else:
                 quit()
 
+            while len(round.set) is not 0:
+                pygame.time.delay(30)
 
-            round.check_ball_contact(ball)
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        quit()
 
-            ball.check_screen_borders(SCREEN_WIDTH)
-            ball.move()
-            ball.check_paddle_hit(paddle)
+                if ball.ball_y > 800:
+                    quit()
 
-            paddle.move()
-            paddle.check_screen_borders(SCREEN_WIDTH)
+                round.check_ball_contact(ball)
 
+                ball.check_screen_borders(SCREEN_WIDTH)
+                ball.move()
+                ball.check_paddle_hit(paddle)
 
-            screen.fill((0, 0, 0))
+                paddle.move()
+                paddle.check_screen_borders(SCREEN_WIDTH)
 
-            for block in round.set:
-                pygame.draw.rect(screen, (255, 255, 255), (block[0], block[1], 60, 40))
-                pygame.draw.rect(screen, (230, 230, 230), (block[0] + 1, block[1] + 1, 58, 38))
+                screen.fill((0, 0, 0))
 
-            pygame.draw.rect(screen, paddle.collor, (paddle.paddle_x, paddle.paddle_y, paddle.paddle_width, paddle.paddle_height))
-            pygame.draw.circle(screen, ball.color, (ball.ball_x, ball.ball_y), ball.ball_radius)
-            pygame.display.update()
+                for block in round.set:
+                    pygame.draw.rect(screen, (255, 255, 255), (block[0], block[1], 60, 40))
+                    pygame.draw.rect(screen, (230, 230, 230), (block[0] + 1, block[1] + 1, 58, 38))
+
+                pygame.draw.rect(screen, paddle.collor, (paddle.paddle_x, paddle.paddle_y, paddle.paddle_width, paddle.paddle_height))
+                pygame.draw.circle(screen, ball.color, (ball.ball_x, ball.ball_y), ball.ball_radius)
+                pygame.display.update()
+
+            current_round += 1
+            ball.ball_x = 200
+            ball.ball_y = 300
