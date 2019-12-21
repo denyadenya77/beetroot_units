@@ -101,3 +101,4 @@ while True:
     pygame.draw.rect(screen, paddle_color, (paddle_x, paddle_y, paddle_width, paddle_height))
     pygame.draw.circle(screen, ball_color, (ball_x, ball_y), ball_radius)
     pygame.display.update()
+
