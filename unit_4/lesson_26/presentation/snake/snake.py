@@ -1,4 +1,4 @@
-import pygame, random
+import pygame, random, time
 
 
 class Snake:
@@ -46,11 +46,24 @@ class Snake:
         new_head[1] = old_head_y
         self.body.insert(0, new_head)
 
+    def check_wall(self):
+        if snake.body[0][0] < 0:
+            snake.body[0][0] = 980
+        if snake.body[0][1] < 0:
+            snake.body[0][1] = 980
+        if snake.body[0][0] > 1000:
+            snake.body[0][0] = 0
+        if snake.body[0][1] > 1000:
+            snake.body[0][1] = 0
+
     def add_tail(self):
         """to do before move method"""
-        old_tail = self.body[-1]
-        new_tail = old_tail
-        self.body.append(new_tail)
+        old_tail_x = self.body[-1][0]
+        old_tail_y = self.body[-1][1]
+
+        new_tail_x = old_tail_x
+        new_tail_y = old_tail_y
+        self.body.append([new_tail_x, new_tail_y])
 
 
 class Apple:
@@ -67,11 +80,14 @@ class Game:
     def run(self, snake, apple):
         pygame.init()
         screen = pygame.display.set_mode((1000, 1000))
-        # pygame.time.delay(1)
 
         apple_position = apple.get_new_position()
 
+        speed = 0.20
+
         while True:
+
+            time.sleep(speed)
 
             # quit
             for event in pygame.event.get():
@@ -81,27 +97,40 @@ class Game:
             # stop game
             for elem in snake.body[1:]:
                 if snake.body[0] == elem:
-                    break
+                    return False
 
             # apple eating
             if snake.body[0] == apple_position:
                 snake.add_tail()
                 apple_position = apple.get_new_position()
+                if speed != 0:
+                    speed -= 0.01
+
+
+            # change direction
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_UP] and snake.direction is not 'DOWN':
+                snake.direction = 'UP'
+            elif keys[pygame.K_DOWN] and snake.direction is not 'UP':
+                snake.direction = 'DOWN'
+            elif keys[pygame.K_RIGHT] and snake.direction is not 'LEFT':
+                snake.direction = 'RIGHT'
+            elif keys[pygame.K_LEFT] and snake.direction is not 'RIGHT':
+                snake.direction = 'LEFT'
 
             # moving
             keys = pygame.key.get_pressed()
-            if keys[pygame.K_UP] and snake.direction is not 'DOWN':
+            if snake.direction is 'UP':
                 snake.move_up()
-                snake.direction = 'UP'
-            elif keys[pygame.K_DOWN] and snake.direction is not 'UP':
+            elif snake.direction is 'DOWN':
                 snake.move_down()
-                snake.direction = 'DOWN'
-            elif keys[pygame.K_RIGHT] and snake.direction is not 'LEFT':
+            elif snake.direction is 'RIGHT':
                 snake.move_right()
-                snake.direction = 'RIGHT'
-            elif keys[pygame.K_LEFT] and snake.direction is not 'RIGHT':
+            elif snake.direction is 'LEFT':
                 snake.move_left()
-                snake.direction = 'LEFT'
+
+            snake.check_wall()
+
 
             print(snake.body)
 
