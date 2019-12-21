@@ -83,7 +83,7 @@ class Game:
 
         apple_position = apple.get_new_position()
 
-        speed = 0.20
+        speed = 0.1
 
         while True:
 
@@ -103,8 +103,8 @@ class Game:
             if snake.body[0] == apple_position:
                 snake.add_tail()
                 apple_position = apple.get_new_position()
-                if speed != 0:
-                    speed -= 0.01
+                # if speed != 0.1:
+                #     speed -= 0.01
 
 
             # change direction
@@ -130,9 +130,6 @@ class Game:
                 snake.move_left()
 
             snake.check_wall()
-
-
-            print(snake.body)
 
             # redraw
             screen.fill((0, 0, 0))
