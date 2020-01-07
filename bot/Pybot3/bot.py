@@ -6,9 +6,11 @@ import os.path
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
+from google_auth_oauthlib.flow import InstalledAppFlow, Flow
 from google.auth.transport.requests import Request
 import base64
+import sqlalchemy as db
+import time
 
 class EmailBotService:
     """Service for communicate with bot and gmail."""
@@ -17,65 +19,61 @@ class EmailBotService:
         self.updater = Updater(token=access_token, use_context=True)
         self.track_message = None
 
+        self.chat_id = self.updater.bot
+
         start_handler = CommandHandler(command="start",
                                        callback=self.start_command)
-
-        cancel_handler = CommandHandler(command="cancel",
-                                        callback=self.cancel_command)
+        # cancel_handler = CommandHandler(command="cancel",
+        #                                 callback=self.cancel_command)
+        get_message_handler = CommandHandler(command="getmessage",
+                                             callback=self.getmessage)
         self.updater.dispatcher.add_handler(start_handler)
-        self.updater.dispatcher.add_handler(cancel_handler)
+        self.updater.dispatcher.add_handler(get_message_handler)
+        # self.updater.dispatcher.add_handler(cancel_handler)
 
     def run_bot(self):
         """Running bot."""
         self.updater.start_polling()
 
-    def cancel_command(self, bot, update):
-        pass
-        """Bot cancel command"""
-        text_message = "If you want start again please enter /start."
-        print(text_message)
-        self.track_message = None
-        bot.send_message(chat_id=update.message.chat_id, text=text_message)
+    # def cancel_command(self, bot, update):
+    #     """Bot cancel command"""
+    #     text_message = "If you want start again please enter /start."
+    #     print(text_message)
+    #     bot.send_message(chat_id=update.message.chat_id, text=text_message)
 
-    def start_command(self, update, context):
-        """Bot start command"""
-        SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
-        creds = None
-        # The file token.pickle stores the user's access and refresh tokens, and is
-        # created automatically when the authorization flow completes for the first
-        # time.
-        # if os.path.exists('token.pickle'):
-        #     with open('token.pickle', 'rb') as token:
-        #         creds = pickle.load(token)
-        # If there are no (valid) credentials available, let the user log in.
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    'credentials.json', SCOPES)
-                creds = flow.run_local_server(port=0)
-            # Save the credentials for the next run
-            with open('token.pickle', 'wb') as token:
-                pickle.dump(creds, token)
+    def get_chat_id(self, update):
+        chat_id = update['message']['chat']['id']
+        return chat_id
 
-        service = build('gmail', 'v1', credentials=creds)
+    def getmessage(self, update, context):
 
-        # Call the Gmail API
-        # results = service.users().labels().list(userId='me').execute()
-        # labels = results.get('labels', [])
-        #
-        # if not labels:
-        #     context.bot.send_message(chat_id=update.message.chat_id, text='No labels found.')
-        # else:
-        #     labels_names = [label['name'] for label in labels]
-        #     context.bot.send_message(chat_id=update.message.chat_id, text="\n".join(labels_names))
+        redirect_uri = f"http://localhost:8000/"
+        flow = Flow.from_client_secrets_file(
+            'credentials.json',
+            scopes=['https://mail.google.com/',
+                    'https://www.googleapis.com/auth/gmail.readonly'],
+            redirect_uri=redirect_uri)
 
+        engine = db.create_engine('sqlite:////home/denis/udemy_django/project_1/helloworld/db.sqlite3')
+        connection = engine.connect()
+        metadata = db.MetaData()
+        hola_bottable = db.Table('hola_bottable', metadata, autoload=True, autoload_with=engine)
 
-        # работает
-        # получаем последние сообщения с ящика
+        # Equivalent to 'SELECT * FROM census'
+        query = db.select([hola_bottable])
+        ResultProxy = connection.execute(query)
+        ResultSet = ResultProxy.fetchall()
+
+        code = ResultSet[-1][1]
+        flow.fetch_token(code=code, code_verifier="111")
+
+        # You can use flow.credentials, or you can just get a requests session
+        # using flow.authorized_session.
+        session = flow.authorized_session()
+        # print(session.get('https://www.googleapis.com/userinfo/v2/me').json())
+
         messages = []
-        response = service.users().messages().list(userId='me').execute()
+        response = session.users().messages().list(userId='me').execute()
         messages.extend(response['messages'])
 
         # у каждого из сообщений достаем id
@@ -83,7 +81,7 @@ class EmailBotService:
             mid = message['id']
 
             # получаем сообщение по id
-            message_message = service.users().messages().get(userId='me', id=mid).execute()
+            message_message = session.users().messages().get(userId='me', id=mid).execute()
 
             # информация об отправителе, получателе и теме сообщения хранится в ключе 'payload' --> 'headers'
             headers = message_message['payload']['headers']
@@ -121,6 +119,30 @@ class EmailBotService:
                                    f'Text of message: {decoded_text}'
 
             context.bot.send_message(chat_id=update.message.chat_id, text=telebot_message_text)
+
+
+
+
+
+    def start_command(self, update, context):
+        """Bot start command"""
+        SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+        creds = None
+        redirect_uri = f"http://localhost:8000/"
+        flow = Flow.from_client_secrets_file(
+            'credentials.json',
+            scopes=['profile', 'email'],
+            redirect_uri=redirect_uri
+        )
+        flow.code_verifier = "111"
+
+
+        # Tell the user to go to the authorization URL.
+        auth_url, _ = flow.authorization_url(prompt='consent',  access_type='offline', include_granted_scopes='true')
+
+        telebot_message_text = 'Please go to this URL: {}'.format(auth_url)
+        context.bot.send_message(chat_id=update.message.chat_id, text=telebot_message_text)
+
 
 
 
